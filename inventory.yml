@@ -1,0 +1,9 @@
+all:
+  children:
+    load-balancer:
+      hosts:
+        192.168.70.66: 
+        192.168.70.67:
+    wordpress:
+      hosts:
+        192.168.70.146:

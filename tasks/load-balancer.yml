@@ -1,0 +1,47 @@
+- name: "Install package"
+  hosts: load-balancer
+  become: true
+  tasks:
+    - apt:
+        name:
+          - nginx
+          - keepalived
+        state: latest
+        update_cache: true
+
+    - template:
+        src: templates/keepalived.conf.j2
+        dest: /etc/keepalived/keepalived.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart keepalived
+
+    - template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart nginx
+      
+    - lineinfile:
+        path: /etc/hosts
+        line: "{{ hostvars['192.168.70.68'].domain_name }}  {{ '192.168.70.68' }}"
+        state: present
+          
+    - lineinfile:
+        path: /etc/hosts
+        line: "{{ hostvars['192.168.70.69'].domain_name }}  {{ '192.168.70.69' }}"
+        state: present
+
+  handlers:
+    - name: Restart keepalived
+      service:
+        name: keepalived
+        state: restarted
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted

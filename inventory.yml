@@ -2,8 +2,29 @@ all:
   children:
     load-balancer:
       hosts:
-        192.168.70.66: 
+        192.168.70.66:
+          priority: 100
         192.168.70.67:
+          priority: 90
     wordpress:
       hosts:
-        192.168.70.146:
+        192.168.70.68:
+          domain_name: wordpress.lan
+    prestashop:
+      hosts:
+        192.168.70.69:
+          domain_name: prestashop.lan
+    mariadb:
+      hosts:
+        192.168.70.70:
+    monitoring:
+      hosts:
+        192.168.70.71:
+
+  vars:
+    domain_name: dundermifflin.lan
+    network_cidr: 192.168.70.0/24
+    ansible_db_password: root
+    interface: ens33
+    virtual_router_id: 51
+    vip: "{{ network_cidr | ipaddr('last_usable') }}"

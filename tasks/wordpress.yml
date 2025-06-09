@@ -1,0 +1,10 @@
+- name: "Install WordPress"
+  hosts: wordpress
+  become: true
+  tasks:
+    - apt:
+        name: apache2
+        update_cache: true
+        state: latest
+    - template:
+        src: templates/vhost.conf.j2

@@ -1,0 +1,52 @@
+- name: "Install MariaDB"
+  hosts: mariadb
+  become: true
+  tasks:
+    - apt:
+        name:
+          - mariadb-server
+          - python3-pymysql
+          - python3-pip
+        state: present
+
+    - service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+    - community.mysql.mysql_db:
+        name: wordpress
+        state: present
+        login_unix_socket: /run/mysqld/mysqld.sock
+
+    - community.mysql.mysql_db:
+        name: prestashop
+        state: present
+        login_unix_socket: /run/mysqld/mysqld.sock
+
+    - community.mysql.mysql_user:
+        name: wordpress
+        password: "{{ ansible_db_password }}"
+        priv: 'wordpress.*:ALL'
+        host: "{{ '192.168.70.68' }}"
+        state: present
+        login_unix_socket: /run/mysqld/mysqld.sock
+
+    - community.mysql.mysql_user:
+        name: prestashop
+        password: "{{ ansible_db_password }}"
+        priv: 'prestashop.*:ALL'
+        host: "{{ '192.168.70.69' }}"
+        state: present
+        login_unix_socket: /run/mysqld/mysqld.sock
+
+    - community.mysql.mysql_user:
+        name: ''
+        host_all: true
+        state: absent
+        login_unix_socket: /run/mysqld/mysqld.sock
+
+    - community.mysql.mysql_db:
+        name: test
+        state: absent
+        login_unix_socket: /run/mysqld/mysqld.sock

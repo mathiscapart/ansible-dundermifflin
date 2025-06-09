@@ -3,8 +3,56 @@
   become: true
   tasks:
     - apt:
-        name: apache2
+        name:
+          - apache2
+          - php
+          - php-curl 
+          - php-fpm 
+          - php-bcmath 
+          - php-gd 
+          - php-soap 
+          - php-zip 
+          - php-curl 
+          - php-mbstring 
+          - php-mysqlnd 
+          - php-gd 
+          - php-xml
+          - php-intl
         update_cache: true
         state: latest
+
+    - file:
+        path: /var/www/{{ hostvars['192.168.70.68'].domain_name }}
+        owner: www-data
+        group: www-data
+        state: directory
+        mode: '0755'
+
+    - unarchive:
+        src: https://wordpress.org/latest.tar.gz
+        dest: /tmp/
+        remote_src: yes
+        owner: www-data
+        group: www-data
+        mode: '0664'
+
+    - shell: |
+        mv /tmp/wordpress/* /var/www/{{ hostvars['192.168.70.68'].domain_name }}
+
     - template:
         src: templates/vhost.conf.j2
+        dest: /etc/apache2/sites-available/{{ hostvars['192.168.70.68'].domain_name }}.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload apache2
+      
+    - shell: |
+        a2enconf {{ hostvars['192.168.70.68'].domain_name }}
+        a2ensite {{ hostvars['192.168.70.68'].domain_name }}
+      notify: Reload apache2
+  handlers:
+    - name: Reload apache2
+      service:
+        name: apache2
+        state: reloaded

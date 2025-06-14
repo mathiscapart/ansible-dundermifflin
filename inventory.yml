@@ -3,24 +3,40 @@ all:
     load-balancer:
       hosts:
         192.168.70.66:
+          exporters:
+            node_exporter: 9100
+            keepalived_exporter: 9165
           priority: 100
         192.168.70.67:
           priority: 90
+          exporters:
+            node_exporter: 9100
+            keepalived_exporter: 9165
     wordpress:
       hosts:
         192.168.70.68:
           domain_name: wordpress.lan
+          exporters:
+            node_exporter: 9100
+            apache_exporter: 9117
     prestashop:
       hosts:
         192.168.70.69:
           domain_name: prestashop.lan
+          exporters:
+            node_exporter: 9100
+            apache_exporter: 9117
     mariadb:
       hosts:
         192.168.70.70:
+          exporters:
+            node_exporter: 9100
+            mysql_exporter: 9104
     monitoring:
       hosts:
         192.168.70.71:
-
+          exporters:
+            node_exporter: 9100
   vars:
     domain_name: dundermifflin.lan
     network_cidr: 192.168.70.0/24

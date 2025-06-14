@@ -1,0 +1,8 @@
+services:
+  apache-exporter:
+    image: lusotycoon/apache-exporter:v1.0.10
+    container_name: apache-exporter
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      - APACHE_STATUS_URL=http://127.0.0.1/server-status?auto

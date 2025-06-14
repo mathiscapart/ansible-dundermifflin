@@ -1,0 +1,13 @@
+<VirtualHost *:80>
+    ServerName {{ hostvars[inventory_hostname].domain_name }}
+    DocumentRoot /var/www/{{ hostvars[inventory_hostname].domain_name }}
+
+    <Directory /var/www/{{ hostvars[inventory_hostname].domain_name }}>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ hostvars[inventory_hostname].domain_name }}-error.log
+    LogLevel warn
+    CustomLog ${APACHE_LOG_DIR}/{{ hostvars[inventory_hostname].domain_name }}-access.log combined
+</VirtualHost>

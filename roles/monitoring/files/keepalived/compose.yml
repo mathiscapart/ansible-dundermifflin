@@ -1,0 +1,9 @@
+services:
+  keepalived-exporter:
+    image: mehdy/keepalived-exporter:v1.7.0
+    container_name: keepalived-exporter
+    ports:
+      - "9165:9165"
+    volumes:
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+    restart: unless-stopped

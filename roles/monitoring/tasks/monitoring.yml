@@ -1,0 +1,40 @@
+- file:
+    path:  /opt/monitoring/
+    state: directory
+- file:
+    path:  /opt/monitoring/prometheus
+    state: directory
+- file:
+    path:  /opt/monitoring/alertmanager
+    state: directory
+- file:
+    path:  /opt/monitoring/blackbox
+    state: directory
+- template:
+    src: prometheus.conf.j2
+    dest: /opt/monitoring/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: '0644'
+- copy:
+    src: monitoring/compose.yml
+    dest: /opt/monitoring/
+    owner: root
+    group: root
+    mode: '0644'
+- copy:
+    src: alertmanager/alertmanager.yml
+    dest: /opt/monitoring/alertmanager/
+    owner: root
+    group: root
+    mode: '0644'
+- copy:
+    src: blackbox/blackbox.yml
+    dest: /opt/monitoring/blackbox/
+    owner: root
+    group: root
+    mode: '0644'
+- community.docker.docker_compose_v2:
+    project_src: /opt/monitoring
+    state: restarted
+  register: output

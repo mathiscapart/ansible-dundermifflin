@@ -1,0 +1,10 @@
+- copy:
+    src: files/keepalived/compose.yml
+    dest: /opt/keepalived_exporter/
+    owner: root
+    group: root
+    mode: '0644'
+
+- community.docker.docker_compose_v2:
+    project_src:  /opt/keepalived_exporter
+    state: present

@@ -1,0 +1,101 @@
+- name: Install required packages
+  apt:
+    name:
+      - apache2
+      - php
+      - php-curl
+      - php-fpm
+      - php-bcmath
+      - php-gd
+      - php-soap
+      - php-zip
+      - php-mbstring
+      - php-mysqlnd
+      - php-xml
+      - php-intl
+    update_cache: true
+    state: latest
+
+- name: Create WordPress directory
+  file:
+    path: "{{ wp_path }}"
+    owner: www-data
+    group: www-data
+    state: directory
+    mode: '0755'
+
+- name: Download and extract WordPress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: Copy WordPress to web root
+  copy:
+    src: /tmp/wordpress/
+    dest: "{{ wp_path }}/"
+    remote_src: yes
+    owner: www-data
+    group: www-data
+
+- name: Set correct permissions on WordPress directory
+  file:
+    path: "{{ wp_path }}"
+    recurse: yes
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Download WP-CLI
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/local/bin/wp
+    mode: '0755'
+
+- name: Create wp-config.php
+  command: >
+    wp config create
+    --dbname={{ wp_db_name }}
+    --dbuser={{ wp_db_user }}
+    --dbpass={{ wp_db_pass }}
+    --dbhost={{ wp_db_host }}
+    --path={{ wp_path }}
+    --allow-root
+  args:
+    creates: "{{ wp_path }}/wp-config.php"
+
+- name: Install WordPress site
+  command: >
+    wp core install
+    --url={{ wp_site_url }}
+    --title="{{ wp_site_title }}"
+    --admin_user={{ wp_admin_user }}
+    --admin_password={{ wp_admin_password }}
+    --admin_email={{ wp_admin_email }}
+    --path={{ wp_path }}
+    --allow-root
+  args:
+    creates: "{{ wp_path }}/.wp-installed"
+
+- name: Mark installation as done
+  file:
+    path: "{{ wp_path }}/.wp-installed"
+    state: touch
+    owner: www-data
+    group: www-data
+
+- name: Add Apache vhost config
+  template:
+    src: templates/vhost.conf.j2
+    dest: "/etc/apache2/sites-available/080-{{ wp_domain }}.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart apache2
+
+- name: Enable Apache modules and site
+  shell: |
+    a2enmod rewrite
+    a2dissite 000-default.conf
+    a2ensite 080-{{ wp_domain }}
+  notify: Restart apache2

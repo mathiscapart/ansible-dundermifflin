@@ -1,0 +1,24 @@
+- name: Include Docker installation
+  import_tasks: docker.yml
+
+- name: Include node exporter setup
+  import_tasks: node.yml
+
+- name: Include keepalived exporter setup
+  import_tasks: keepalived.yml
+  when: "'load-balancer' in group_names"
+
+- name: Include mysql exporter setup
+  import_tasks: mariadb.yml
+  when: "'mariadb' in group_names"
+
+- name: Include apache exporter setup
+  import_tasks: apache.yml
+  when: "'wordpress' in group_names or 'prestashop' in group_names"
+
+- name: Include monitorign installation
+  import_tasks: monitoring.yml
+  when: "'monitoring' in group_names"
+  vars:
+    folder_prometheus_status:
+    folder_targets_status:

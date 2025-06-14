@@ -1,0 +1,10 @@
+- copy:
+    src: files/node/compose.yml
+    dest: /opt/node_exporter/
+    owner: root
+    group: root
+    mode: '0644'
+
+- community.docker.docker_compose_v2:
+    project_src:  /opt/node_exporter
+    state: present

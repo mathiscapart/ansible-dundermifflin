@@ -1,0 +1,64 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+scrape_configs:
+  - job_name: "prometheus"
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets:
+          - localhost:9090
+
+{% for i in groups | difference(['all', 'ungrouped']) %}
+  - job_name: '{{ i }}'
+    honor_labels: true
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      {% set targets = [] %}
+      {% for host in groups[i] %}
+        {% set exporters = hostvars[host].exporters | default({}) %}
+        {% for exporter, port in exporters.items() %}
+          {% set _ = targets.append(host + ':' + port|string) %}
+        {% endfor %}
+      {% endfor %}
+      - targets: {{ targets | to_nice_json }}
+{% endfor %}
+
+
+  - job_name: 'blackbox_wordpress'
+    metrics_path: /probe
+    params:
+      module: [ http_vhost ]
+    static_configs:
+      - targets:
+          - http://192.168.70.200/
+    relabel_configs:
+      - source_labels: [ __address__ ]
+        target_label: __param_target
+      - source_labels: [ __param_target ]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: 'blackbox_prestashop'
+    metrics_path: /probe
+    params:
+      module: [ http_vhost ]
+    static_configs:
+      - targets:
+          - http://192.168.70.200/eshop
+    relabel_configs:
+      - source_labels: [ __address__ ]
+        target_label: __param_target
+      - source_labels: [ __param_target ]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115

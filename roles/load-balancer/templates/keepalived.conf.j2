@@ -1,0 +1,12 @@
+vrrp_instance VI_1 {
+    state {% if priority == 100 %}MASTER{% else %}BACKUP{% endif %}
+
+    interface {{ interface }}
+    virtual_router_id {{ virtual_router_id }}
+    priority {{ priority }}
+    advert_int 1
+
+    virtual_ipaddress {
+        {{ vip }}
+    }
+}

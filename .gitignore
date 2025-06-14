@@ -1,2 +1,5 @@
 .venv
 .idea
+.venv_linux
+script_ssh.sh
+servers.txt

@@ -1,5 +1,9 @@
 # Ansible DunderMifflin
 
+## Schéma de l'infrastructure
+
+![IMG](./3ISP-schema.drawio.png)
+
 ## Prérequis
 
 * Un environnement Linux (ou Windows avec WSL) avec Python installé.

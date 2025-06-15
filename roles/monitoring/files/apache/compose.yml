@@ -3,7 +3,6 @@ services:
     image: lusotycoon/apache-exporter:v1.0.10
     container_name: apache-exporter
     restart: unless-stopped
-    ports:
-      - "9117:9117"
+    network_mode: "host"
     environment:
-      - APACHE_STATUS_URL=http://host.docker.internal/server-status?auto
+      - APACHE_STATUS_URL=http://localhost/server-status?auto

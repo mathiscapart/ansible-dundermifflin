@@ -18,7 +18,7 @@
     mode: '0755'
 
 - copy:
-    src: apache-exporter/compose.yml
+    src: apache/compose.yml
     dest: /opt/apache-exporter/compose.yml
     owner: root
     group: root

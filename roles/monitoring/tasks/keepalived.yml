@@ -1,10 +1,48 @@
-- copy:
-    src: files/keepalived/compose.yml
-    dest: /opt/keepalived_exporter/
-    owner: root
-    group: root
+- file:
+    path: "{{ tmp_dir }}"
+    state: directory
+    mode: '0755'
+
+- get_url:
+    url: "{{ download_url }}"
+    dest: /tmp/keepalived_exporter.tar.gz
     mode: '0644'
 
-- community.docker.docker_compose_v2:
-    project_src:  /opt/keepalived_exporter
-    state: present
+- unarchive:
+    src: /tmp/keepalived_exporter.tar.gz
+    dest: "{{ tmp_dir }}"
+    remote_src: yes
+
+- copy:
+    src: "{{ tmp_dir }}/keepalived-exporter"
+    dest: "{{ bin_dir }}/keepalived-exporter"
+    mode: '0755'
+    remote_src: yes
+
+- copy:
+    dest: /etc/systemd/system/keepalived_exporter.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Keepalived Exporter for Prometheus
+      After=network.target
+
+      [Service]
+      User=root
+      Group=sudo
+      Type=simple
+      ExecStart={{ bin_dir }}/keepalived-exporter \
+        --ka.pid-path=/var/run/keepalived.pid \
+        --web.listen-address=":9165"
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+- systemd:
+    daemon_reload: yes
+
+- systemd:
+      name: keepalived_exporter.service
+      state: restarted
+      enabled: true

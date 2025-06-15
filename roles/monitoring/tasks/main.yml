@@ -7,6 +7,12 @@
 - name: Include keepalived exporter setup
   import_tasks: keepalived.yml
   when: "'load-balancer' in group_names"
+  vars:
+    version: "1.5.0"
+    arch: "linux_amd64"
+    bin_dir: "/usr/local/bin"
+    download_url: "https://github.com/mehdy/keepalived-exporter/releases/download/v{{ version }}/keepalived-exporter_{{ version }}_{{ arch }}.tar.gz"
+    tmp_dir: "/tmp/keepalived_exporter"
 
 - name: Include mysql exporter setup
   import_tasks: mariadb.yml

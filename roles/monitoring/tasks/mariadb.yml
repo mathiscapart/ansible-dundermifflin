@@ -1,10 +1,10 @@
 - copy:
-    src: files/mariadb/compose.yml
+    src: files/mariadb/
     dest: /opt/mysql_exporter/
     owner: root
     group: root
     mode: '0644'
 
 - community.docker.docker_compose_v2:
-    project_src:  /opt/mysql_exporter
+    project_src: /opt/mysql_exporter
     state: present

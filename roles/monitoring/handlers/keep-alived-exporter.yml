@@ -1,0 +1,5 @@
+- name: Restart keepalived exporter
+  systemd:
+    name: keepalived_exporter.service
+    state: restarted
+    enabled: true

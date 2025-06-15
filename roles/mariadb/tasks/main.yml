@@ -41,7 +41,7 @@
 
 - community.mysql.mysql_user:
     name: exporter
-    host: localhost
+    host: '%'
     password: exporterpass
     priv: "*.*:PROCESS,REPLICATION CLIENT,SELECT"
     state: present

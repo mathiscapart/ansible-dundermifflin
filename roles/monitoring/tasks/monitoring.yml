@@ -10,6 +10,9 @@
 - file:
     path:  /opt/monitoring/blackbox
     state: directory
+- file:
+    path:  /opt/monitoring/prometheus/rules
+    state: directory
 - template:
     src: prometheus.conf.j2
     dest: /opt/monitoring/prometheus/prometheus.yml
@@ -31,6 +34,12 @@
 - copy:
     src: blackbox/blackbox.yml
     dest: /opt/monitoring/blackbox/
+    owner: root
+    group: root
+    mode: '0644'
+- copy:
+    src: rules/
+    dest: /opt/monitoring/prometheus/rules
     owner: root
     group: root
     mode: '0644'

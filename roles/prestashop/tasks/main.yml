@@ -1,5 +1,4 @@
-- name: Install required packages
-  apt:
+- apt:
     name:
       - apache2
       - php
@@ -17,49 +16,43 @@
     update_cache: true
     state: latest
 
-- name: Create PrestaShop directory
-  file:
+- file:
     path: "{{ presta_path }}"
     owner: www-data
     group: www-data
     state: directory
     mode: '0755'
 
-- name: Download and extract PrestaShop
-  unarchive:
+- unarchive:
     src: https://github.com/PrestaShop/PrestaShop/releases/download/8.2.1/prestashop_8.2.1.zip
     dest: /tmp/
-    remote_src: yes
+    remote_src: true
 
 - file:
     path: /tmp/prestashop_extracted/
     state: directory
     mode: '0755'
 
-- name: Extract inner prestashop.zip
-  unarchive:
+- unarchive:
     src: /tmp/prestashop.zip
     dest: /tmp/prestashop_extracted/
-    remote_src: yes
+    remote_src: true
 
-- name: Copy PrestaShop to web root
-  copy:
+- copy:
     src: /tmp/prestashop_extracted/
     dest: "{{ presta_path }}/"
-    remote_src: yes
+    remote_src: true
     owner: www-data
     group: www-data
 
-- name: Set correct permissions on PrestaShop directory
-  file:
+- file:
     path: "{{ presta_path }}"
-    recurse: yes
+    recurse: true
     owner: www-data
     group: www-data
     mode: '0755'
 
-- name: Add Apache vhost config
-  template:
+- template:
     src: templates/vhost.conf.j2
     dest: "/etc/apache2/sites-available/080-{{ presta_domain }}.conf"
     owner: root
@@ -67,8 +60,7 @@
     mode: '0644'
   notify: Restart apache2
 
-- name: Enable Apache modules and site
-  shell: |
+- shell: |
     a2enmod rewrite
     a2dissite 000-default.conf
     a2ensite 080-{{ presta_domain }}

@@ -1,17 +1,17 @@
 - file:
-    path:  /opt/monitoring/
+    path: /opt/monitoring/
     state: directory
 - file:
-    path:  /opt/monitoring/prometheus
+    path: /opt/monitoring/prometheus
     state: directory
 - file:
-    path:  /opt/monitoring/alertmanager
+    path: /opt/monitoring/alertmanager
     state: directory
 - file:
-    path:  /opt/monitoring/blackbox
+    path: /opt/monitoring/blackbox
     state: directory
 - file:
-    path:  /opt/monitoring/prometheus/rules
+    path: /opt/monitoring/prometheus/rules
     state: directory
 - template:
     src: prometheus.conf.j2

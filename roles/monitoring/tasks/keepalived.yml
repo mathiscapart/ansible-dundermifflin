@@ -11,13 +11,13 @@
 - unarchive:
     src: /tmp/keepalived_exporter.tar.gz
     dest: "{{ tmp_dir }}"
-    remote_src: yes
+    remote_src: true
 
 - copy:
     src: "{{ tmp_dir }}/keepalived-exporter"
     dest: "{{ bin_dir }}/keepalived-exporter"
     mode: '0755'
-    remote_src: yes
+    remote_src: true
 
 - copy:
     dest: /etc/systemd/system/keepalived_exporter.service
@@ -40,9 +40,9 @@
       WantedBy=multi-user.target
 
 - systemd:
-    daemon_reload: yes
+    daemon_reload: true
 
 - systemd:
-      name: keepalived_exporter.service
-      state: restarted
-      enabled: true
+    name: keepalived_exporter.service
+    state: restarted
+    enabled: true

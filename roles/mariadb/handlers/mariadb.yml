@@ -2,4 +2,4 @@
   service:
     name: mariadb
     state: restarted
-    enabled: yes
+    enabled: true

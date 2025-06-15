@@ -6,5 +6,5 @@
     mode: '0644'
 
 - community.docker.docker_compose_v2:
-    project_src:  /opt/node_exporter
+    project_src: /opt/node_exporter
     state: present
